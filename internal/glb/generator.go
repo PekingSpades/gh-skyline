@@ -191,14 +191,14 @@ func generateBox(x, y, z, width, depth, height float64, indexOffset uint32) ([][
 
 	// Define the 8 corner positions
 	corners := [8][3]float32{
-		{float32(x), float32(y), float32(z)},                               // 0: front-bottom-left
-		{float32(x + width), float32(y), float32(z)},                       // 1: front-bottom-right
-		{float32(x + width), float32(y + depth), float32(z)},               // 2: back-bottom-right
-		{float32(x), float32(y + depth), float32(z)},                       // 3: back-bottom-left
-		{float32(x), float32(y), float32(z + height)},                      // 4: front-top-left
-		{float32(x + width), float32(y), float32(z + height)},              // 5: front-top-right
-		{float32(x + width), float32(y + depth), float32(z + height)},      // 6: back-top-right
-		{float32(x), float32(y + depth), float32(z + height)},              // 7: back-top-left
+		{float32(x), float32(y), float32(z)},                          // 0: front-bottom-left
+		{float32(x + width), float32(y), float32(z)},                  // 1: front-bottom-right
+		{float32(x + width), float32(y + depth), float32(z)},          // 2: back-bottom-right
+		{float32(x), float32(y + depth), float32(z)},                  // 3: back-bottom-left
+		{float32(x), float32(y), float32(z + height)},                 // 4: front-top-left
+		{float32(x + width), float32(y), float32(z + height)},         // 5: front-top-right
+		{float32(x + width), float32(y + depth), float32(z + height)}, // 6: back-top-right
+		{float32(x), float32(y + depth), float32(z + height)},         // 7: back-top-left
 	}
 
 	// For simplicity, we use 24 vertices (4 per face) to allow flat shading
