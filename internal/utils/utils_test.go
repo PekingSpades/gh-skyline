@@ -136,37 +136,77 @@ func TestGenerateOutputFilename(t *testing.T) {
 		startYear int
 		endYear   int
 		output    string
+		format    string
 		want      string
 	}{
 		{
-			name:      "single year",
+			name:      "single year stl",
 			user:      "testuser",
 			startYear: 2024,
 			endYear:   2024,
 			output:    "",
+			format:    "stl",
 			want:      "testuser-2024-github-skyline.stl",
 		},
 		{
-			name:      "year range",
+			name:      "year range stl",
 			user:      "testuser",
 			startYear: 2020,
 			endYear:   2024,
 			output:    "",
+			format:    "stl",
 			want:      "testuser-2020-24-github-skyline.stl",
 		},
 		{
-			name:      "override",
+			name:      "override stl",
 			user:      "testuser",
 			startYear: 2020,
 			endYear:   2024,
 			output:    "myoutput.stl",
+			format:    "stl",
 			want:      "myoutput.stl",
+		},
+		{
+			name:      "single year glb",
+			user:      "testuser",
+			startYear: 2024,
+			endYear:   2024,
+			output:    "",
+			format:    "glb",
+			want:      "testuser-2024-github-skyline.glb",
+		},
+		{
+			name:      "year range glb",
+			user:      "testuser",
+			startYear: 2020,
+			endYear:   2024,
+			output:    "",
+			format:    "glb",
+			want:      "testuser-2020-24-github-skyline.glb",
+		},
+		{
+			name:      "override glb",
+			user:      "testuser",
+			startYear: 2020,
+			endYear:   2024,
+			output:    "myoutput.glb",
+			format:    "glb",
+			want:      "myoutput.glb",
+		},
+		{
+			name:      "add extension for glb",
+			user:      "testuser",
+			startYear: 2024,
+			endYear:   2024,
+			output:    "myoutput",
+			format:    "glb",
+			want:      "myoutput.glb",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GenerateOutputFilename(tt.user, tt.startYear, tt.endYear, tt.output)
+			got := GenerateOutputFilename(tt.user, tt.startYear, tt.endYear, tt.output, tt.format)
 			if got != tt.want {
 				t.Errorf("generateOutputFilename() = %v, want %v", got, tt.want)
 			}

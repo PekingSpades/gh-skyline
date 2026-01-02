@@ -62,7 +62,7 @@ func TestGenerateSkyline(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			client := github.NewClient(tt.mockClient)
-			err := GenerateSkyline(client, tt.startYear, tt.endYear, tt.targetUser, tt.full, "", false)
+			err := GenerateSkyline(client, tt.startYear, tt.endYear, tt.targetUser, tt.full, "", "stl", false)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateSkyline() error = %v, wantErr %v", err, tt.wantErr)
 			}

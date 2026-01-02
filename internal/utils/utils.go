@@ -10,8 +10,9 @@ import (
 
 // Constants for GitHub launch year and default output file format
 const (
-	githubLaunchYear = 2008
-	outputFileFormat = "%s-%s-github-skyline.stl"
+	githubLaunchYear   = 2008
+	outputFileFormatSTL = "%s-%s-github-skyline.stl"
+	outputFileFormatGLB = "%s-%s-github-skyline.glb"
 )
 
 // ParseYearRange parses whether a year is a single year or a range of years.
@@ -62,15 +63,23 @@ func FormatYearRange(startYear, endYear int) string {
 	return fmt.Sprintf("%04d-%02d", startYear, endYear%100)
 }
 
-// GenerateOutputFilename creates a consistent filename for the STL output
-func GenerateOutputFilename(user string, startYear, endYear int, output string) string {
+// GenerateOutputFilename creates a consistent filename for the output file
+func GenerateOutputFilename(user string, startYear, endYear int, output string, format string) string {
+	ext := ".stl"
+	outputFormat := outputFileFormatSTL
+	if strings.ToLower(format) == "glb" {
+		ext = ".glb"
+		outputFormat = outputFileFormatGLB
+	}
+
 	if output != "" {
-		// Ensure the filename ends with .stl
-		if !strings.HasSuffix(strings.ToLower(output), ".stl") {
-			return output + ".stl"
+		// Ensure the filename ends with the correct extension
+		lowerOutput := strings.ToLower(output)
+		if !strings.HasSuffix(lowerOutput, ".stl") && !strings.HasSuffix(lowerOutput, ".glb") {
+			return output + ext
 		}
 		return output
 	}
 	yearStr := FormatYearRange(startYear, endYear)
-	return fmt.Sprintf(outputFileFormat, user, yearStr)
+	return fmt.Sprintf(outputFormat, user, yearStr)
 }

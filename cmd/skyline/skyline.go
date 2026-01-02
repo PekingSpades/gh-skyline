@@ -1,5 +1,5 @@
 // Package skyline provides the entry point for the GitHub Skyline Generator.
-// It generates a 3D model of GitHub contributions in STL format.
+// It generates a 3D model of GitHub contributions in STL or GLB format.
 package skyline
 
 import (
@@ -10,6 +10,7 @@ import (
 	"github.com/github/gh-skyline/internal/ascii"
 	"github.com/github/gh-skyline/internal/errors"
 	"github.com/github/gh-skyline/internal/github"
+	"github.com/github/gh-skyline/internal/glb"
 	"github.com/github/gh-skyline/internal/logger"
 	"github.com/github/gh-skyline/internal/stl"
 	"github.com/github/gh-skyline/internal/types"
@@ -24,7 +25,7 @@ type GitHubClientInterface interface {
 }
 
 // GenerateSkyline creates a 3D model with ASCII art preview of GitHub contributions for the specified year range, or "full lifetime" of the user
-func GenerateSkyline(client *github.Client, startYear, endYear int, targetUser string, full bool, output string, artOnly bool) error {
+func GenerateSkyline(client *github.Client, startYear, endYear int, targetUser string, full bool, output string, format string, artOnly bool) error {
 	log := logger.GetLogger()
 
 	if targetUser == "" {
@@ -86,14 +87,22 @@ func GenerateSkyline(client *github.Client, startYear, endYear int, targetUser s
 	}
 
 	if !artOnly {
-		// Generate filename
-		outputPath := utils.GenerateOutputFilename(targetUser, startYear, endYear, output)
+		// Generate filename with appropriate extension
+		outputPath := utils.GenerateOutputFilename(targetUser, startYear, endYear, output, format)
 
-		// Generate the STL file
-		if len(allContributions) == 1 {
-			return stl.GenerateSTL(allContributions[0], outputPath, targetUser, startYear)
+		// Generate the model file based on format
+		switch strings.ToLower(format) {
+		case "glb":
+			if len(allContributions) == 1 {
+				return glb.GenerateGLB(allContributions[0], outputPath, targetUser, startYear)
+			}
+			return glb.GenerateGLBRange(allContributions, outputPath, targetUser, startYear, endYear)
+		default: // "stl" or any other value defaults to STL
+			if len(allContributions) == 1 {
+				return stl.GenerateSTL(allContributions[0], outputPath, targetUser, startYear)
+			}
+			return stl.GenerateSTLRange(allContributions, outputPath, targetUser, startYear, endYear)
 		}
-		return stl.GenerateSTLRange(allContributions, outputPath, targetUser, startYear, endYear)
 	}
 
 	return nil

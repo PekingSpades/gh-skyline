@@ -27,16 +27,21 @@ var (
 	artOnly   bool
 	output    string // new output path flag
 	token     string // GitHub personal access token
+	format    string // output format (stl or glb)
 )
 
 // rootCmd is the root command for the GitHub Skyline CLI tool.
 var rootCmd = &cobra.Command{
 	Use:   "skyline",
 	Short: "Generate a 3D model of a user's GitHub contribution history",
-	Long: `GitHub Skyline creates 3D printable STL files from GitHub contribution data.
+	Long: `GitHub Skyline creates 3D printable model files from GitHub contribution data.
 It can generate models for specific years or year ranges for the authenticated user or an optional specified user.
 
-While the STL file is being generated, an ASCII preview will be displayed in the terminal.
+Supported output formats:
+  - STL: Standard 3D printing format (default)
+  - GLB: Binary glTF format with vertex colors (GitHub green gradient)
+
+While the file is being generated, an ASCII preview will be displayed in the terminal.
 
 ASCII Preview Legend:
   ' ' Empty/Sky     - No contributions
@@ -76,6 +81,7 @@ func initFlags() {
 	flags.BoolVarP(&artOnly, "art-only", "a", false, "Generate only ASCII preview")
 	flags.StringVarP(&output, "output", "o", "", "Output file path (optional)")
 	flags.StringVarP(&token, "token", "t", "", "GitHub personal access token (optional, defaults to gh CLI auth)")
+	flags.StringVar(&format, "format", "stl", "Output format: stl (default) or glb (with colors)")
 }
 
 // executeRootCmd is the main execution function for the root command.
@@ -107,7 +113,7 @@ func handleSkylineCommand(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("invalid year range: %v", err)
 	}
 
-	return skyline.GenerateSkyline(client, startYear, endYear, user, full, output, artOnly)
+	return skyline.GenerateSkyline(client, startYear, endYear, user, full, output, format, artOnly)
 }
 
 // Browser interface matches browser.Browser functionality.
