@@ -24,13 +24,8 @@ type GitHubClientInterface interface {
 }
 
 // GenerateSkyline creates a 3D model with ASCII art preview of GitHub contributions for the specified year range, or "full lifetime" of the user
-func GenerateSkyline(startYear, endYear int, targetUser string, full bool, output string, artOnly bool) error {
+func GenerateSkyline(client *github.Client, startYear, endYear int, targetUser string, full bool, output string, artOnly bool) error {
 	log := logger.GetLogger()
-
-	client, err := github.InitializeGitHubClient()
-	if err != nil {
-		return errors.New(errors.NetworkError, "failed to initialize GitHub client", err)
-	}
 
 	if targetUser == "" {
 		if err := log.Debug("No target user specified, using authenticated user"); err != nil {

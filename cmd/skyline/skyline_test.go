@@ -9,12 +9,6 @@ import (
 )
 
 func TestGenerateSkyline(t *testing.T) {
-	// Save original initializer
-	originalInit := github.InitializeGitHubClient
-	defer func() {
-		github.InitializeGitHubClient = originalInit
-	}()
-
 	tests := []struct {
 		name       string
 		startYear  int
@@ -67,12 +61,8 @@ func TestGenerateSkyline(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create a closure that returns our mock client
-			github.InitializeGitHubClient = func() (*github.Client, error) {
-				return github.NewClient(tt.mockClient), nil
-			}
-
-			err := GenerateSkyline(tt.startYear, tt.endYear, tt.targetUser, tt.full, "", false)
+			client := github.NewClient(tt.mockClient)
+			err := GenerateSkyline(client, tt.startYear, tt.endYear, tt.targetUser, tt.full, "", false)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateSkyline() error = %v, wantErr %v", err, tt.wantErr)
 			}

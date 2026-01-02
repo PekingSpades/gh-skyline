@@ -18,3 +18,20 @@ var InitializeGitHubClient ClientInitializer = func() (*Client, error) {
 	}
 	return NewClient(apiClient), nil
 }
+
+// InitializeGitHubClientWithToken creates a GitHub client using the provided token.
+// If token is empty, falls back to the default GitHub CLI authentication.
+func InitializeGitHubClientWithToken(token string) (*Client, error) {
+	if token == "" {
+		return InitializeGitHubClient()
+	}
+
+	opts := api.ClientOptions{
+		AuthToken: token,
+	}
+	apiClient, err := api.NewGraphQLClient(opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create GraphQL client with token: %w", err)
+	}
+	return NewClient(apiClient), nil
+}
