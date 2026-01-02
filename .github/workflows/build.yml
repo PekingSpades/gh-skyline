@@ -1,9 +1,8 @@
-# .github/workflows/build.yml
 name: Build
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
     branches: [main]
 
@@ -12,7 +11,23 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            artifact_name: gh-skyline-linux-amd64
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            artifact_name: gh-skyline-windows-amd64.exe
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            artifact_name: gh-skyline-darwin-arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v5
@@ -23,7 +38,27 @@ jobs:
           go-version-file: go.mod
 
       - name: Build
-        run: go build -v ./...
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -v -o ${{ matrix.artifact_name }} .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_name }}
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
 
       - name: Test with Coverage
         run: |
